@@ -1,0 +1,194 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+body {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 650px;
+    background-color: #1e1e1e;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #4CAF50;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+h3 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.description {
+    text-align: center;
+    color: #aaaaaa;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.help-text {
+    display: block;
+    color: #888888;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.25);
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    background-color: #6c6c6c;
+    cursor: not-allowed;
+}
+
+.status-box {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: #262626;
+    border-left: 4px solid #4CAF50;
+}
+
+.status-box.success {
+    border-left-color: #4CAF50;
+}
+
+.status-box.error {
+    border-left-color: #f44336;
+}
+
+.download-button {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    margin-top: 1rem;
+    background-color: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.download-button:hover {
+    background-color: #1976D2;
+}
+
+.download-button:active {
+    transform: translateY(1px);
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    padding: 3px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress {
+    height: 20px;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+}
+
+#generation-status {
+    color: #e0e0e0;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+#elapsed-time {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 1.7rem;
+    }
+    
+    input[type="number"],
+    input[type="text"],
+    button {
+        padding: 0.7rem;
+    }
+}

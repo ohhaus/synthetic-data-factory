@@ -1,0 +1,55 @@
+# Файлы ОС и редакторов
+.DS_Store
+*.swp
+*.swo
+*~
+Thumbs.db
+._*
+
+# Папки и файлы Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+data/
+
+# Виртуальное окружение
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# Кэш и логи
+.pytest_cache/
+.mypy_cache/
+*.log
+*.sqlite3
+
+# Пакеты и зависимости
+*.egg-info/
+*.egg
+dist/
+build/
+pip-wheel-metadata/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Конфиги и секреты
+.env
+*.env
+secrets.py
+config_local.py
+
+# Прочие
+.coverage
+htmlcov/
+*.sql
+*.sqlite

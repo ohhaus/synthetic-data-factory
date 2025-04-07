@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Synthetic Data Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <h1>Synthetic Data Generator</h1>
+            <p class="description">Generate large datasets with customizable parameters</p>
+            
+            <form action="/generate-form" method="post" id="generate-form">
+                <div class="form-group">
+                    <label for="num_rows">Number of rows:</label>
+                    <input type="number" id="num_rows" name="num_rows" required min="1">
+                    <small class="help-text">Total number of data records to generate</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="output_file">Output file name:</label>
+                    <input type="text" id="output_file" name="output_file" required>
+                    <small class="help-text">Base name for output files (will be archived as .zip)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chunk_size">Chunk size:</label>
+                    <input type="number" id="chunk_size" name="chunk_size" required min="1" value="50000">
+                    <small class="help-text">Number of rows to process in each batch</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="num_workers">Number of workers:</label>
+                    <input type="number" id="num_workers" name="num_workers" required min="1" value="4">
+                    <small class="help-text">Parallel processing threads to use</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="records_per_file">Records per file (optional):</label>
+                    <input type="number" id="records_per_file" name="records_per_file" min="1">
+                    <small class="help-text">Leave empty to generate a single file or specify to split data</small>
+                </div>
+                
+                <button type="submit" id="generate-button">Generate Data</button>
+            </form>
+            
+            <div id="progress-container" style="display: none; margin-top: 20px;">
+                <div class="status-box">
+                    <h3>Generation in Progress</h3>
+                    <div class="progress-bar">
+                        <div id="progress" class="progress"></div>
+                    </div>
+                    <p id="elapsed-time"></p>
+                </div>
+            </div>
+
+            <div id="download-container" style="display: none; margin-top: 20px;">
+                <div class="status-box success">
+                    <h3>Generation Complete!</h3>
+                    <p>Your data has been generated and archived successfully.</p>
+                    <a href="/download" id="download-link" class="download-button">Download Archive</a>
+                </div>
+            </div>
+            
+            <div id="error-container" style="display: none; margin-top: 20px;">
+                <div class="status-box error">
+                    <h3>Error</h3>
+                    <p id="error-message">An error occurred during generation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generate-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Reset UI state
+            document.getElementById('download-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('generate-button').disabled = true;
+            document.getElementById('generate-button').textContent = 'Generating...';
+            
+            fetch('/generate-form', {
+                method: 'POST',
+                body: new FormData(this)
+            }).then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.detail || 'Generation failed');
+                    });
+                }
+                pollGenerationStatus();
+            }).catch(error => {
+                console.error('Error:', error);
+                document.getElementById('progress-container').style.display = 'none';
+                document.getElementById('error-container').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Generation failed: ' + error.message;
+                document.getElementById('generate-button').disabled = false;
+                document.getElementById('generate-button').textContent = 'Generate Data';
+            });
+        });
+
+        function pollGenerationStatus() {
+            let lastElapsedTime = "";
+            const statusInterval = setInterval(() => {
+                fetch('/status')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'idle') {
+                            clearInterval(statusInterval);
+                            document.getElementById('progress-container').style.display = 'none';
+                            document.getElementById('download-container').style.display = 'block';
+                            document.getElementById('generate-button').disabled = false;
+                            document.getElementById('generate-button').textContent = 'Generate Data';
+                            
+
+                            document.getElementById('progress').style.width = "0%";
+                        } else {      
+                            if (data.elapsed_time !== lastElapsedTime) {
+                                lastElapsedTime = data.elapsed_time;
+                                document.getElementById('elapsed-time').textContent = 
+                                    `Elapsed time: ${data.elapsed_time}`;
+                                
+                                // Симуляуция прогресса 
+                                const progress = document.getElementById('progress');
+                                let currentWidth = parseFloat(progress.style.width || "0");
+                                if (currentWidth < 90) { // Остается на 90% для завершения 
+                                    progress.style.width = (currentWidth + 1) + "%";
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error polling status:', error);
+                        clearInterval(statusInterval);
+                        document.getElementById('progress-container').style.display = 'none';
+                        document.getElementById('error-container').style.display = 'block';
+                        document.getElementById('error-message').textContent = 'Error checking status: ' + error.message;
+                        document.getElementById('generate-button').disabled = false;
+                        document.getElementById('generate-button').textContent = 'Generate Data';
+                    });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
