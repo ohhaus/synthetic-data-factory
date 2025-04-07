@@ -60,12 +60,11 @@ def generate_and_archive(request: GenerateRequest):
         start_time = time.time()
         generation_status.start_time = start_time
 
-        logging.info(
+        records_info = (
             f"Starting data generation: {request.num_rows} rows, "
             f"{request.chunk_size} chunk size, {request.num_workers} workers, "
-            f"records per file: {request.records_per_file or 'все \
-                                 данные в один файл'}"
         )
+        logging.info(records_info)
 
         csv_filename = request.output_file
         if csv_filename.endswith('.csv'):
