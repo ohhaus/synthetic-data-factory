@@ -96,7 +96,7 @@ uvicorn main:app --reload
 
 ## Лицензия
 
-[Ваша выбранная лицензия]
+MIT License
 
 ## Автор
 
