@@ -39,40 +39,48 @@ class DataArchiver:
                 archive_name += '.zip'
 
             self.current_archive_path = os.path.join(
-                self.data_dir, archive_name)
+                self.data_dir,
+                archive_name
+            )
 
             # Проверяем, что файлы существуют и не пусты
             valid_files = []
             for file_path in file_paths:
-                if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+                if (os.path.exists(file_path) and
+                        os.path.getsize(file_path) > 0):
                     valid_files.append(file_path)
                 else:
                     logging.warning(
-                        f"File does not exist or is empty: {file_path}")
+                        f"File does not exist or is empty: {file_path}"
+                    )
 
             if not valid_files:
                 logging.error("No valid files to archive!")
                 raise Exception("No valid files to archive!")
 
             # Создаем zip-архив и добавляем все файлы
-            with zipfile.ZipFile(self.current_archive_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            with zipfile.ZipFile(
+                self.current_archive_path,
+                'w',
+                zipfile.ZIP_DEFLATED
+            ) as zipf:
                 for file_path in valid_files:
                     file_name = os.path.basename(file_path)
-
                     zipf.write(file_path, file_name)
                     logging.info(f"Added file to archive: {file_path}")
-
                     # Удаляем исходный файл
                     os.remove(file_path)
                     logging.info(f"Removed source file: {file_path}")
 
             # Проверяем, что архив создан и не пуст
-            if not os.path.exists(self.current_archive_path) or os.path.getsize(self.current_archive_path) == 0:
+            if (not os.path.exists(self.current_archive_path) or
+                    os.path.getsize(self.current_archive_path) == 0):
                 logging.error("Created archive is empty or does not exist!")
                 raise Exception("Archive creation failed!")
 
             logging.info(
-                f"Archive created successfully: {self.current_archive_path}")
+                f"Archive created successfully: {self.current_archive_path}"
+            )
             return self.current_archive_path
 
         except Exception as e:

@@ -27,8 +27,8 @@ logging.basicConfig(
 
 class GenerateRequest(BaseModel):
     """Модель запроса для генерации данных"""
-    num_rows: int = Field(default=1_000_000, gt=0)
-    output_file: str = Field(default="data.csv", min_length=1)
+    num_rows: int = Field(default=None, gt=0)
+    output_file: str = Field(default=None, min_length=1)
     chunk_size: int = Field(default=50_000, gt=0)
     num_workers: int = Field(default=4, gt=0)
     records_per_file: Optional[int] = Field(default=None, gt=0)
@@ -63,7 +63,8 @@ def generate_and_archive(request: GenerateRequest):
         logging.info(
             f"Starting data generation: {request.num_rows} rows, "
             f"{request.chunk_size} chunk size, {request.num_workers} workers, "
-            f"records per file: {request.records_per_file or 'все данные в один файл'}"
+            f"records per file: {request.records_per_file or 'все \
+                                 данные в один файл'}"
         )
 
         csv_filename = request.output_file
@@ -113,7 +114,10 @@ async def generate_data(request: GenerateRequest, background_tasks: BackgroundTa
     if generation_status.is_generating:
         raise HTTPException(
             status_code=409,
-            detail=f"Another file '{generation_status.current_file}' is currently being generated"
+            detail=(
+                f"Another file '{generation_status.current_file}' "
+                "is currently being generated"
+            )
         )
 
     logging.info("Received request to generate and archive data")
@@ -130,11 +134,14 @@ async def generate_from_form(
     num_workers: int = Form(...),
     records_per_file: Optional[str] = Form(None),
 ):
-    """Обработчик POST-запроса для запуска генерации и архивации данных через форму"""
+    """Обработчик POST-запроса для запуска генерации через форму"""
     if generation_status.is_generating:
         raise HTTPException(
             status_code=409,
-            detail=f"Another file '{generation_status.current_file}' is currently being generated"
+            detail=(
+                f"Another file '{generation_status.current_file}' "
+                "is currently being generated"
+            )
         )
 
     try:
