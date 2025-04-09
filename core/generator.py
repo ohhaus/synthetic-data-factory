@@ -9,7 +9,7 @@ import pandas as pd
 
 class SyntheticDataGenerator:
     """Генератор синтетических данных с использованием Dask."""
-
+    # тут и везде - магические числа!
     def __init__(self, num_rows, chunk_size=50_000, num_workers=4):
         """Инициализация генератора с указанными параметрами."""
         self.num_rows = num_rows
@@ -22,9 +22,11 @@ class SyntheticDataGenerator:
     @staticmethod
     def _generate_chunk(faker_seed, chunk_size, rows_remaining):
         """Генерация одного чанка синтетических данных."""
+        # Фейкер работает довольно долго, точно ли нет либы получше?
         fake = Faker()
         fake.seed_instance(faker_seed)
         actual_chunk_size = min(chunk_size, rows_remaining)
+        # Может лучше генератором? зачем этим списком занимать память
         data = [{
             'id': fake.uuid4(),
             'name': fake.name(),
@@ -37,12 +39,13 @@ class SyntheticDataGenerator:
             'bank_account': fake.iban(),
             'swift_code': fake.swift11(use_dataset=True, primary=True),
         } for _ in range(actual_chunk_size)]
-
+        #  Библиотека пандас - довольно тяжелая, может есть решение полегче?
         return pd.DataFrame(data)
 
     def generate_to_csv(self, output_file, records_per_file=None):
         """Генерация данных и сохранение их в CSV файл(ы)."""
         try:
+            # Форматирование нормальное сделай
             self.client = Client(n_workers=self.num_workers,
                                  threads_per_worker=1,
                                  dashboard_address=':0')
@@ -63,7 +66,7 @@ class SyntheticDataGenerator:
                 faker_seed += 1
 
             dask_df = dd.from_delayed(chunks)
-
+            #  выглядит плохо
             if records_per_file:
                 num_partitions = max(1, self.num_rows // records_per_file)
                 dask_df = dask_df.repartition(npartitions=num_partitions)

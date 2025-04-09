@@ -9,7 +9,7 @@ class DataArchiver:
         self.data_dir = 'data'
         os.makedirs(self.data_dir, exist_ok=True)
         self.current_archive_path = None
-
+    # лайк
     def _cleanup_old_archives(self):
         """Удаляет старые архивы из директории."""
         try:
@@ -21,7 +21,7 @@ class DataArchiver:
         except Exception as e:
             logging.error(f"Error cleaning up old archives: {str(e)}")
             raise
-
+    # Функция выглядит избыточной - если хочется написать коммент с пояснением - значит пора вынести его в доп функцию
     def create_zip(self, file_paths, archive_name):
         """Создает zip-архив из указанных файлов CSV."""
         try:

@@ -11,12 +11,13 @@ from pydantic import BaseModel, Field
 
 from core.archiver import DataArchiver
 from core.generator import SyntheticDataGenerator
-
+# Ну не в мейне же все писать/ сделай нормально ну
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+# Идея использовать класс - хорошо, но не масштабируемо/ расширяемо, попробуй использовать набор классов
 data_archiver = DataArchiver()
 
 logging.basicConfig(
@@ -24,7 +25,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-
+# В отдельный файл
 class GenerateRequest(BaseModel):
     """Модель запроса для генерации данных"""
     num_rows: int = Field(default=None, gt=0)
@@ -33,7 +34,7 @@ class GenerateRequest(BaseModel):
     num_workers: int = Field(default=4, gt=0)
     records_per_file: Optional[int] = Field(default=None, gt=0)
 
-
+# выглядит как датакласс
 class GenerationStatus:
     """Класс для отслеживания статуса генерации файла"""
 
@@ -51,9 +52,10 @@ async def home(request: Request):
     """Главная страница"""
     return templates.TemplateResponse("index.html", {"request": request})
 
-
+# Почему функция? + слишком большая - нужно разбить
 def generate_and_archive(request: GenerateRequest):
     """Генерация и архивация данных с отслеживанием статуса"""
+    # Все ли нужно в try?
     try:
         generation_status.is_generating = True
         generation_status.current_file = request.output_file
@@ -136,6 +138,7 @@ async def generate_from_form(
     """Обработчик POST-запроса для запуска генерации через форму"""
     if generation_status.is_generating:
         raise HTTPException(
+            # Магическое число используй статусы
             status_code=409,
             detail=(
                 f"Another file '{generation_status.current_file}' "
@@ -195,6 +198,7 @@ async def download_file():
 @app.get("/status")
 async def get_generation_status():
     """Получение текущего статуса генерации"""
+    # Лучше сделать 1 ретерн
     if not generation_status.is_generating:
         return {
             "status": "idle",
