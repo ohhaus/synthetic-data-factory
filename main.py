@@ -164,6 +164,7 @@ async def generate_from_form(
             num_workers=num_workers,
             records_per_file=records_per_file_int
         )
+    # А если будет ValidationError
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -175,7 +176,7 @@ async def generate_from_form(
 async def download_file():
     """Обработчик для скачивания архива с данными"""
     archive_path = data_archiver.get_archive_path()
-
+    # Сделай кастомные ошибки
     if archive_path is None:
         raise HTTPException(
             status_code=404,
